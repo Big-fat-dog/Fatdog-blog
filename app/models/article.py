@@ -1,13 +1,13 @@
 from datetime import datetime
 from sqlalchemy.orm import mapped_column,Mapped
 from base import Base
-from sqlalchemy import Integer,String,DateTime,Text
+from sqlalchemy import Integer,String,DateTime,Text,ForeignKey
 
 class Article(Base):
     __tablename__ = 'articles'
     id:Mapped[int] = mapped_column(Integer,primary_key=True,nullable=False,unique=True,index=True,autoincrement=True)
     author:Mapped[str] = mapped_column(String(50),nullable=False)
-    category_id:Mapped[int] = mapped_column(Integer,ForeignKey='category.id',nullable=False)
+    category_id:Mapped[int] = mapped_column(Integer,ForeignKey("category.id"),nullable=False)
     title:Mapped[str] = mapped_column(String(225),index=True)
     tags:Mapped[str] = mapped_column(String(500),nullable=False)
     md_html:Mapped[str] = mapped_column(Text, nullable=False)
