@@ -18,5 +18,4 @@ class Article(Base):
     category:Mapped["Category"]=relationship("Category",back_populates="articles")
     comments:Mapped[list["Comment"]]=relationship("Comment",back_populates="article",cascade="all, delete-orphan",order_by="Comment.create_time")
     def __repr__(self):
-        return (f"Atticle<id={self.id},title={self.title},category_id={self.category_id}"
-                f"tag={self.tags},md_html={self.md_html},published={self.published},updated={self.updated},image={self.image}")
+        return f"Atticle<id={self.id},title={self.title},category_id={self.category_id}"

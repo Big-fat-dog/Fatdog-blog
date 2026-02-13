@@ -10,6 +10,6 @@ class Category(Base):
     name:Mapped[str]=mapped_column(String(50),nullable=False,unique=True,comment="板块名称",index=True)
     order:Mapped[int]=mapped_column(Integer,nullable=False,comment="排序")
 
-    article:Mapped[list["Article"]]=relationship("Article",back_populates="category",cascade="all, delete-orphan",order_by="Article.published_time")
+    articles:Mapped[list["Article"]]=relationship("Article",back_populates="category",cascade="all, delete-orphan",order_by="Article.published_time")
     def __repr__(self):
         return f"<Category id={self.id} name={self.name} order={self.order}>"
