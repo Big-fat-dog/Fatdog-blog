@@ -2,7 +2,9 @@ from base import Base
 from sqlalchemy.orm import Mapped,mapped_column,relationship
 from typing import Optional
 from datetime import datetime
-from sqlalchemy import Integer,ForeignKey,String,Text,DateTime
+from sqlalchemy import Integer, ForeignKey, String, Text, DateTime, CheckConstraint
+
+
 class Comment(Base):
     __tablename__ = "comments"
     id:Mapped[int]=mapped_column(Integer,primary_key=True,autoincrement=True,index=True)
@@ -11,14 +13,20 @@ class Comment(Base):
     created_at:Mapped[datetime] = mapped_column(DateTime,nullable=False,default=datetime.now)
     status:Mapped[str] = mapped_column(String(50),default="pending",nullable=False)
     article_id:Mapped[int] = mapped_column(Integer,ForeignKey('articles.id'),nullable=False)
-    parent_id:Mapped[Optional[int]] = mapped_column(Integer,ForeignKey('comments.id'),nullable=True)
+    parent_id:Mapped[Optional[int]] = mapped_column(Integer,ForeignKey('comments.id'),nullable=True,index=True)
     views_count:Mapped[int] = mapped_column(Integer,nullable=False,default=0)
-    #所有层主id
-    root_id:Mapped[int] = mapped_column(Integer,nullable=True)
+    #所属于层主id
+    root_id:Mapped[int] = mapped_column(Integer,nullable=True,index=True)
     #关系字段
     article:Mapped["Article"]=relationship("Article",back_populates="comments")
     parent:Mapped["Comment"]=relationship("Comment",remote_side=[id],back_populates="replies",foreign_keys=[parent_id])
     replies:Mapped[list["Comment"]]=relationship("Comment",back_populates="parent",cascade="all, delete-orphan")
     user:Mapped['User']=relationship("User",back_populates="comments")
+    __table_args__ = (
+        CheckConstraint(
+            status.in_(["pending", "approved", "rejected"]),
+            name="ck_comment_status"
+        ),
+    )
     def __repr__(self):
         return f"Comment<id={self.id} user_id={self.user_id} status={self.status} >"
